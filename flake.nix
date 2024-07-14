@@ -1,27 +1,32 @@
 {
   description = "A Rust application";
 
-  inputs.flake-utils.url = "github:numtide/flake-utils";
-
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
+  };
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        rust = (import (pkgs.fetchFromGitHub {
-          owner = "oxalica";
-          repo = "rust-overlay";
-          rev = "f5354a3a2a5d2b7a0a0b2d5b8b1aecfdc1fc0b77";
-          sha256 = "sha256:0jmmwx2n1szpadj9b8f1w1q2b7pg7n3b2h2b9k5j9s9m7h7r9kjv";
-        }) {
-          inherit pkgs;
-        }).rust-bin.stable.latest;
       in
       {
-        devShell = pkgs.mkShell {
-          buildInputs = [ rust ];
-          LD_LIBRARY_PATH = lib.makeLibraryPath [
+        defaultPackage = pkgs.rustPlatform.buildRustPackage rec {
+          pname = "ip_updater";
+          version = "0.1.0";
+          src = ./.;
+          cargoSha256 = "sha256:188516aj66zbjjgnsnhc6fnqa216q6dfddv4vblg8xyq5rd8b09p";
+          buildInputs = [ pkgs.openssl ];
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
             pkgs.openssl
           ];
+        };
+
+        devShell = pkgs.mkShell {
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+            pkgs.openssl
+          ];
+        };
       }
     );
 }
