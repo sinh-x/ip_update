@@ -1,43 +1,34 @@
+mod wasabi;
+
 use gethostname::gethostname;
 use reqwest::Error;
-use rusoto_core::Region;
-use rusoto_s3::{PutObjectRequest, S3Client, S3};
-use std::env;
 use tokio::time::{sleep, Duration};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    dotenv::dotenv().ok();
-
-    // let s3_client = S3Client::new(Region::UsEast1); // replace with your region
-    // let bucket = env::var("WASABI_BUCKET")?;
-    // let object_key = "public_ip.txt";
+    let hostname = gethostname()
+        .into_string()
+        .unwrap_or_else(|_| "unknown".to_string());
+    let ip_file_path = format!("shared_resources/{}_public_ip.txt", hostname);
 
     loop {
-        let ip = get_public_ip().await?;
-        println!("Public IP: {}", ip);
-        sleep(Duration::from_secs(60)).await; // run every hour
+        let current_ip = wasabi::read_from_wasabi("sinh", &ip_file_path)
+            .await
+            .unwrap_or_else(|_| String::new());
+        let new_ip = get_public_ip().await?;
+
+        if new_ip != current_ip {
+            println!("Public IP: {}", new_ip);
+            wasabi::upload_to_wasabi("sinh", &ip_file_path, &new_ip).await?;
+        } else {
+            println!("Public IP has not changed");
+        }
+
+        sleep(Duration::from_secs(10)).await;
     }
 }
 
 async fn get_public_ip() -> Result<String, Error> {
     let ip = reqwest::get("https://api.ipify.org").await?.text().await?;
     Ok(ip)
-}
-
-async fn upload_to_wasabi(
-    client: &S3Client,
-    bucket: &str,
-    object_key: &str,
-    content: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
-    let put_request = PutObjectRequest {
-        bucket: bucket.to_string(),
-        key: object_key.to_string(),
-        body: Some(content.as_bytes().to_vec().into()),
-        ..Default::default()
-    };
-
-    client.put_object(put_request).await?;
-    Ok(())
 }
