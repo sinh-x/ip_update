@@ -12,17 +12,19 @@
       in
       {
         defaultPackage = pkgs.rustPlatform.buildRustPackage rec {
-          pname = "ip_updater";
+          pname = "ip_update";
           version = "0.1.0";
           src = ./.;
-          cargoSha256 = "sha256:188516aj66zbjjgnsnhc6fnqa216q6dfddv4vblg8xyq5rd8b09p";
+          cargoSha256 = "sha256-yICTbIDOyTCy443pBa0yS+W2WOUCbBJijj53JooL9Kw=";
           buildInputs = [ pkgs.openssl ];
+          nativeBuildInputs = [ pkgs.cargo pkgs.rustc pkgs.pkg-config pkgs.openssl ];
           LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
             pkgs.openssl
           ];
         };
 
         devShell = pkgs.mkShell {
+          buildInputs = [ pkgs.openssl ];
           LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
             pkgs.openssl
           ];
