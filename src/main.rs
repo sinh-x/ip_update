@@ -1,6 +1,7 @@
 mod wasabi;
 
 use gethostname::gethostname;
+use log::{error, info};
 use reqwest::Error;
 use tokio::time::{sleep, Duration};
 
@@ -18,10 +19,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let new_ip = get_public_ip().await?;
 
         if new_ip != current_ip {
-            println!("Public IP: {}", new_ip);
+            info!("Public IP: {}", new_ip);
             wasabi::upload_to_wasabi("sinh", &ip_file_path, &new_ip).await?;
         } else {
-            println!("Public IP has not changed");
+            info!("Public IP has not changed");
         }
 
         sleep(Duration::from_secs(30 * 60)).await;
