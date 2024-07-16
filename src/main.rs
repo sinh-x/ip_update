@@ -24,7 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("Public IP has not changed");
         }
 
-        sleep(Duration::from_secs(10)).await;
+        sleep(Duration::from_secs(30 * 60)).await;
     }
 }
 
