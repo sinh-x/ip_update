@@ -15,7 +15,7 @@
           pname = "ip_update";
           version = "0.1.0";
           src = ./.;
-          cargoSha256 = "sha256-yICTbIDOyTCy443pBa0yS+W2WOUCbBJijj53JooL9Kw=";
+          cargoSha256 = "sha256-QD3LgDxnAXR4VUnXwchW80vffeAp1JylGq5bKdCcdgE=";
           buildInputs = [ pkgs.openssl ];
           nativeBuildInputs = [ pkgs.cargo pkgs.rustc pkgs.pkg-config pkgs.openssl ];
           LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [

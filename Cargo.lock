@@ -693,6 +693,7 @@ name = "ip_update"
 version = "0.1.0"
 dependencies = [
  "gethostname",
+ "log",
  "reqwest",
  "rusoto_core",
  "rusoto_credential",
