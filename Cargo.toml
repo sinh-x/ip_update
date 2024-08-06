@@ -1,6 +1,6 @@
 [package]
-name = "ip_update"
-version = "0.1.0"
+name = "sinh-x-ip_updater"
+version = "0.2.0"
 edition = "2021"
 
 [dependencies]

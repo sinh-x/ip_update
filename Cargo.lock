@@ -689,19 +689,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ip_update"
-version = "0.1.0"
-dependencies = [
- "gethostname",
- "log",
- "reqwest",
- "rusoto_core",
- "rusoto_credential",
- "rusoto_s3",
- "tokio",
-]
-
-[[package]]
 name = "ipnet"
 version = "2.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1342,6 +1329,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a9e9e0b4211b72e7b8b6e85c807d36c212bdb33ea8587f7569562a84df5465b1"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "sinh-x-ip_updater"
+version = "0.2.0"
+dependencies = [
+ "gethostname",
+ "log",
+ "reqwest",
+ "rusoto_core",
+ "rusoto_credential",
+ "rusoto_s3",
+ "tokio",
 ]
 
 [[package]]

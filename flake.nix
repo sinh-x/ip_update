@@ -12,23 +12,28 @@
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
-        pkgs = nixpkgs.legacypackages.${system};
+        pkgs = nixpkgs.legacyPackages.${system};
       in {
-        defaultpackage = pkgs.rustplatform.buildrustpackage {
-          pname = "ip_update";
-          version = "0.1.0";
+        defaultPackage = pkgs.rustPlatform.buildRustPackage {
+          pname = "sinh-x-ip_updater";
+          version = "0.2.0";
           src = ./.;
-          cargosha256 = "sha256-qd3lgdxnaxr4vunxwchw80vffeap1jylgq5bkdccdge=";
-          buildinputs = [pkgs.openssl];
-          nativebuildinputs = [pkgs.cargo pkgs.rustc pkgs.pkg-config pkgs.openssl];
-          ld_library_path = pkgs.lib.makelibrarypath [
+          cargoSha256 = "sha256-nfkVUSHjCnfYqrxed2C+KlqhBjQ2mL3v8K5P6OkRzFI";
+          buildInputs = [pkgs.openssl];
+          nativeBuildInputs = [pkgs.cargo pkgs.rustc pkgs.pkg-config pkgs.openssl];
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
             pkgs.openssl
           ];
         };
 
-        devshell = pkgs.mkshell {
-          buildinputs = [pkgs.openssl];
-          ld_library_path = pkgs.lib.makelibrarypath [
+        devShell = pkgs.mkShell {
+          buildInputs = [
+            pkgs.cargo
+            pkgs.rustc
+            pkgs.pkg-config
+            pkgs.openssl
+          ];
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
             pkgs.openssl
           ];
         };
