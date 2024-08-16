@@ -1,42 +1,60 @@
 {
-  description = "Command line tool to update public IP address to Wasabi";
+  description = "Sinh-x-ip_updater";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
-  };
-  outputs = {
-    self,
-    nixpkgs,
-    flake-utils,
-  }:
-    flake-utils.lib.eachDefaultSystem (
-      system: let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in {
-        defaultPackage = pkgs.rustPlatform.buildRustPackage {
-          pname = "sinh-x-ip_updater";
-          version = "0.2.0";
-          src = ./.;
-          cargoSha256 = "sha256-nfkVUSHjCnfYqrxed2C+KlqhBjQ2mL3v8K5P6OkRzFI";
-          buildInputs = [pkgs.openssl];
-          nativeBuildInputs = [pkgs.cargo pkgs.rustc pkgs.pkg-config pkgs.openssl];
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-            pkgs.openssl
-          ];
-        };
+    # NixPkgs (nixos-unstable)
+    nixpkgs = {
+      url = "github:nixos/nixpkgs/nixos-unstable";
+    };
 
-        devShell = pkgs.mkShell {
-          buildInputs = [
-            pkgs.cargo
-            pkgs.rustc
-            pkgs.pkg-config
-            pkgs.openssl
-          ];
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-            pkgs.openssl
-          ];
+    # nixvim nix configuration
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      # url = "git+file:///Users/khaneliman/Documents/github/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
+
+    # Snowfall Lib
+    snowfall-lib = {
+      url = "github:snowfallorg/lib";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Snowfall Flake
+    snowfall-flake = {
+      url = "github:snowfallorg/flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs =
+    inputs:
+    let
+      inherit (inputs) snowfall-lib;
+
+      lib = snowfall-lib.mkLib {
+        inherit inputs;
+        src = ./.;
+
+        snowfall = {
+          meta = {
+            name = "sinh-x-ip_updater";
+            title = "Sinh-x-ip_updater";
+          };
+
+          namespace = "sinh-x";
         };
-      }
-    );
+      };
+    in
+    lib.mkFlake {
+      alias = {
+        packages = {
+          default = "sinh-x-ip_updater";
+        };
+      };
+
+      outputs-builder = channels: { formatter = channels.nixpkgs.nixfmt-rfc-style; };
+    };
 }
